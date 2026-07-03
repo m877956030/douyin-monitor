@@ -90,7 +90,6 @@
     "typescript": "~5.9.2"
   },
   "private": true,
-  "packageManager": "pnpm@11.9.0",
   "pnpm": {
     "patchesDir": "patches"
   }
