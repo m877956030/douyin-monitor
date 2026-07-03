@@ -33,9 +33,7 @@ jobs:
           packages: 'platforms;android-36 build-tools;36.0.0 ndk;27.1.12297006 cmake;3.22.1'
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
-        env:
-          CI: true
+        run: pnpm install --no-frozen-lockfile --ignore-scripts
 
       - name: Create local.properties
         run: |
