@@ -7,7 +7,8 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "lint": "devkit-lint"
+    "lint": "devkit-lint",
+    "eas-build-pre-install": "corepack enable && corepack prepare pnpm@11.9.0 --activate"
   },
   "dependencies": {
     "@react-navigation/native": "^7.1.33",
