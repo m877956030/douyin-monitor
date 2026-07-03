@@ -7,8 +7,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "lint": "devkit-lint",
-    "eas-build-pre-install": "npx pnpm@11.9.0 --version"
+    "lint": "devkit-lint"
   },
   "dependencies": {
     "@react-navigation/native": "^7.1.33",

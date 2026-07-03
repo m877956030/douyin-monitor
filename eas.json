@@ -15,6 +15,7 @@
     "production": {
       "node": "22.22.2",
       "pnpm": "11.9.0",
+      "corepack": true,
       "android": {
         "buildType": "apk"
       }
