@@ -39,6 +39,23 @@ jobs:
         run: |
           echo "sdk.dir=$ANDROID_HOME" > android/local.properties
 
+      - name: Fix webview Kotlin type error
+        run: |
+          WEBVIEW_FILE=$(find node_modules -path "*/react-native-webview/android/src/main/java/com/reactnativecommunity/webview/RNCWebViewManagerImpl.kt" | head -1)
+          if [ -f "$WEBVIEW_FILE" ]; then
+            sed -i 's/args.getString(0))/args.getString(0) ?: "")/g' "$WEBVIEW_FILE"
+            echo "Fixed webview Kotlin file"
+          fi
+      
+      - name: Fix expo-modules-core worklets integration
+        run: |
+          EXPO_FILE=$(find node_modules -path "*/expo-modules-core/android/build.gradle" | head -1)
+          if [ -f "$EXPO_FILE" ]; then
+            sed -i 's/tasks.getByName("mergeDebugNativeLibs")/try { tasks.getByName("mergeDebugNativeLibs")/g' "$EXPO_FILE"
+            sed -i 's/tasks.getByName("mergeReleaseNativeLibs")/tasks.getByName("mergeReleaseNativeLibs") } catch (UnknownTaskException e) { println("Skipping worklets linking") }/g' "$EXPO_FILE"
+            echo "Fixed expo-modules-core build.gradle"
+          fi
+
       - name: Build APK
         run: |
           cd android
