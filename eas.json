@@ -14,7 +14,7 @@
     },
     "production": {
       "node": "22.22.2",
-      "pnpm": "9.15.9",
+      "pnpm": "8.15.9",
       "android": {
         "buildType": "apk"
       }
