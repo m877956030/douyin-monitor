@@ -1,0 +1,151 @@
+0: 抖音博主监控 App
+1: 源码部署全流程说明
+2: React Native + Expo + Supabase
+4: 2026年7月  ·  v11
+6: 一、项目概览
+7: 本 App 是一款基于 React Native + Expo SDK 55 开发的移动应用，用于监控抖音博主动态、获取作品数据、AI 分析文案内容，帮助用户追踪关注博主的内容更新与数据变化。
+9: 核心功能一览
+12: 二、技术栈
+13: 前端：React Native + Expo SDK 55 + TypeScript
+14: 路由：expo-router（文件系统路由）
+15: 样式：NativeWind v4 + Tailwind CSS v3
+16: 后端：Supabase（PostgreSQL + Edge Functions + Storage）
+17: 包管理：pnpm
+20: 三、前置准备
+21: 3.1  安装工具
+22: Node.js（≥ 18）
+23: https://nodejs.org  下载 LTS 版本
+24: pnpm
+25: npm install -g pnpm
+26: Expo CLI
+27: npm install -g expo-cli
+28: Supabase CLI（用于部署 Edge Functions）
+29: npm install -g supabase
+31: 3.2  新建 Supabase 项目
+32: 访问 https://supabase.com → 注册并创建新项目
+33: 记录以下信息（后续配置使用）：
+34: Project URL：https://xxx.supabase.co
+35: Anon Key（公开密钥，前端使用）
+36: Service Role Key（私密，Edge Function 使用，勿泄露）
+37: Project Ref（项目 ID，CLI 链接时使用）
+40: 四、数据库初始化
+41: 在 Supabase Dashboard → SQL Editor 中，按以下顺序执行迁移文件（文件位于 supabase/migrations/ 目录）：
+44: ⚠️ 注意：必须按序号顺序执行，每个文件执行后检查是否有报错再继续。
+47: 五、环境变量配置
+48: 将源码包中的 .env.example 复制为 .env，填入你的 Supabase 信息：
+50: EXPO_PUBLIC_APP_ID=your-app-id
+51: EXPO_PUBLIC_SUPABASE_URL=https://你的project.supabase.co
+52: EXPO_PUBLIC_SUPABASE_ANON_KEY=你的anon_key
+54: ⚠️ .env 文件不要提交到 Git，已在 .gitignore 中排除。
+57: 六、Edge Functions 部署
+58: 函数说明
+60: 部署步骤
+61: 登录 Supabase CLI
+62: supabase login
+63: 链接你的项目
+64: supabase link --project-ref 你的project_ref
+65: 设置必要的环境变量（Service Role Key）
+66: supabase secrets set SUPABASE_SERVICE_ROLE_KEY=你的service_role_key
+67: 部署所有 Edge Functions
+68: supabase functions deploy douyin-fetch
+69: supabase functions deploy douyin-comments
+70: supabase functions deploy ai-service
+71: supabase functions deploy groq-transcript
+73: ✅ 也可在 Supabase Dashboard → Edge Functions 界面手动粘贴代码部署。
+76: 七、安装依赖并运行
+77: 7.1  安装前端依赖
+78: pnpm install
+80: 7.2  启动开发服务器
+81: Web 预览（推荐先用这个验证）
+82: pnpm expo start --web
+83: iOS
+84: pnpm expo run:ios
+85: Android
+86: pnpm expo run:android
+88: ⚠️ iOS/Android 需要安装 Xcode / Android Studio，首次运行时间较长（5~15 分钟）。
+91: 八、App 内初始配置
+92: 首次打开 App 后，进入底部导航「设置」页面，依次配置：
+94: 8.1  抖音 Cookie（必填）
+95: 用 Chrome/Edge 打开 www.douyin.com 并登录
+96: 按 F12 打开开发者工具 → Application → Cookies → www.douyin.com
+97: 找到并复制全部 Cookie 字符串（含 sessionid 字段）
+98: 粘贴到 App 设置页「抖音 Cookie」输入框并保存
+100: ⚠️ Cookie 有时效（通常30天），过期后需重新获取配置。
+102: 8.2  AI 提供商（至少配置一个）
+103: 点击「AI 提供商」→「添加」
+104: 填写名称（如：DeepSeek）、API Endpoint（如：https://api.deepseek.com）、API Key
+105: 点击「测试连接」自动获取可用模型列表
+106: 选择模型后保存
+108: 推荐 DeepSeek（性价比高），API Endpoint: https://api.deepseek.com
+110: 8.3  硅基流动 API Key（可选，用于完整逐字稿）
+111: 访问 https://siliconflow.cn 注册账号
+112: 获取 API Key（格式：sk-xxxxxxxx）
+113: 填入设置页「语音识别」→「硅基流动 API Key」并保存
+115: 使用模型：FunAudioLLM/SenseVoiceSmall（中文优化，有免费额度）
+118: 九、源码目录结构
+119: src/
+120:   app/              — expo-router 路由页面
+121:     (app)/          — 登录后主界面
+122:       (tabs)/       — 底部 Tab 导航
+123:         home.tsx    — 博主列表首页
+124:         categories.tsx — 分类管理
+125:         settings.tsx   — 设置页
+126:       works/        — 作品相关页面
+127:         [bloggerId].tsx  — 某博主作品列表
+128:         detail/[workId].tsx — 作品详情+AI对话
+129:     (auth)/         — 登录页
+130:   components/       — 可复用组件
+131:     AiAnalysisView.tsx — AI分析面板
+132:     ui/             — react-native-reusables 组件库
+133:   lib/
+134:     api.ts          — 所有 Supabase 调用封装
+135:     types.ts        — TypeScript 类型定义
+136:     utils.ts        — 工具函数
+137:   client/supabase.ts — Supabase 客户端初始化
+138: supabase/
+139:   functions/        — Edge Functions（Deno）
+140:     douyin-fetch/   — 核心：抖音数据+转录
+141:     ai-service/     — AI分析+对话
+142:     douyin-comments/ — 评论获取
+143:   migrations/       — 数据库迁移SQL文件
+146: 十、常见问题
+147: Q: 数据获取失败，提示 Cookie 无效
+148: A: 重新从浏览器复制抖音 Cookie，注意要完整复制（通常 6000+ 字符），在设置页更新后重试。
+150: Q: AI 分析失败或无响应
+151: A: 检查 AI 提供商配置是否正确，可在设置页点击「测试连接」验证。注意 API Key 不要带多余空格。
+153: Q: 逐字稿只显示视频描述而非真实文字
+154: A: 需配置「硅基流动 API Key」才能进行音频转录。未配置时系统返回视频描述作为兜底内容。
+156: Q: Edge Function 部署失败
+157: A: 确认 supabase link 使用了正确的 project-ref，并已执行 supabase login。检查网络是否能访问 supabase.com。
+159: Q: pnpm install 报错
+160: A: 确认 Node.js ≥ 18，pnpm ≥ 8。如果出现 peer dependency 警告可忽略，不影响运行。
+163: 十一、注意事项
+164: 本 App 仅供个人学习/研究使用，请遵守抖音平台使用条款
+165: Cookie 等敏感信息仅存储在你自己的 Supabase 数据库中，不会外传
+166: 硅基流动免费额度有限，建议充值少量余额（¥10 可用较长时间）
+167: 若需多人使用，建议在 Supabase 启用 RLS（行级安全）策略
+168: 定期更新 Cookie 以保持数据访问正常
+172: 抖音知识库 v11  ·  React Native + Expo + Supabase
+--- TABLE 0 ---
+功能 | 说明
+博主监控 | 添加博主主页链接，自动获取最新作品列表
+文案获取 | 优先内置字幕 → 硅基流动音频转录 → 视频描述（三重兜底）
+AI 深度分析 | 18 维度文风分析，浅色主题展示，含情感/结构/互动逻辑等
+AI 对话 | 基于当前文案的多轮对话，支持 @引用其他作品、写作模板
+模型切换器 | 对话顶部直接切换 AI 提供商，无需进入设置页
+评论分析 | 获取视频热门评论，辅助分析用户反应
+多 AI 提供商 | 支持 DeepSeek、OpenAI、Claude 等兼容 OpenAI 协议的 API
+--- TABLE 1 ---
+文件名 | 说明
+00001_create_douyin_monitor_schema.sql | 主表：博主、作品、转录、评论、AI分析
+00002_add_app_settings_table.sql | 应用设置表（Cookie、API Key等）
+00003_add_sec_uid_to_bloggers.sql | 博主 sec_uid 字段
+00004_add_subtitle_url_to_works.sql | 作品字幕URL字段
+00005_add_multi_ai_and_writing_templates.sql | 多AI提供商 + 写作模板表
+00006_add_play_url_to_works.sql | 作品播放URL（用于音频转录）
+--- TABLE 2 ---
+函数名 | 功能
+douyin-fetch | 核心函数：获取博主信息、作品列表、字幕、硅基流动音频转录
+douyin-comments | 获取视频热门评论
+ai-service | 多AI提供商对话 + 深度分析
+groq-transcript | （备用）Groq 语音识别接口

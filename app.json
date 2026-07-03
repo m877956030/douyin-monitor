@@ -1,0 +1,52 @@
+{
+  "expo": {
+    "name": "抖音知识库",
+    "slug": "douyin-knowledge-base",
+    "version": "1.0.10",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "supportsTablet": true,
+      "buildNumber": "1",
+      "bundleIdentifier": "com.miaoda.appcphr4ki6a3up"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#121212"
+      },
+      "predictiveBackGestureEnabled": false,
+      "versionCode": 1,
+      "package": "com.miaoda.appcphr4ki6a3up"
+    },
+    "web": {
+      "bundler": "metro",
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-asset",
+      "expo-sqlite",
+      "expo-font",
+      "expo-system-ui",
+      "expo-web-browser",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#00E5FF",
+          "sounds": [],
+          "mode": "production"
+        }
+      ],
+      "expo-image"
+    ],
+    "router": {
+      "root": "src"
+    },
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

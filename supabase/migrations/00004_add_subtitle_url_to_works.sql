@@ -1,0 +1,1 @@
+ALTER TABLE works ADD COLUMN IF NOT EXISTS subtitle_url text;

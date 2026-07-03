@@ -1,0 +1,1 @@
+ALTER TABLE works ADD COLUMN IF NOT EXISTS play_url text;

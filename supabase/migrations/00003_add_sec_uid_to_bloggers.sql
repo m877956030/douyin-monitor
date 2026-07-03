@@ -1,0 +1,1 @@
+ALTER TABLE bloggers ADD COLUMN IF NOT EXISTS sec_uid text;
